@@ -1,0 +1,15 @@
+{
+  "name": "dji-convert",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "把大疆 HEVC 10-bit 视频转成浏览器可直接播放的 H.264 MP4",
+  "scripts": {
+    "convert": "node convert.mjs",
+    "postinstall": "node -e \"console.log('\\n✅ ffmpeg 已就绪，现在可以双击「一键转换.command」或「一键转换.bat」开始转换。\\n')\""
+  },
+  "optionalDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2"
+  }
+}
