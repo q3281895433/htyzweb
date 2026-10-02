@@ -1,0 +1,54 @@
+[Unit]
+Description=htyz.space school community
+Documentation=https://htyz.space
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=htyz
+Group=htyz
+WorkingDirectory=/opt/htyz
+EnvironmentFile=/opt/htyz/.env
+Environment=NODE_ENV=production
+ExecStartPre=/usr/bin/test -r /opt/htyz/dist/index.html
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=3
+UMask=0027
+
+# --- 安全加固 ---
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/opt/htyz/data /opt/htyz/uploads /opt/htyz/logs
+
+# --- 视频自动转码资源限制 ---
+# 本机 2 核 2GB：转码用 1 个核足够，留出余量给 nginx/node
+# 实测 1080p veryfast 约 100fps/核，2 核机器可更从容
+MemoryMax=1G
+# CPU 配额：总共 2 核，给应用 180%（约 1.8 核），保留 10% 余量
+CPUQuota=180%
+TasksMax=256
+LimitNOFILE=4096
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=htyz
+
+[Install]
+WantedBy=multi-user.target

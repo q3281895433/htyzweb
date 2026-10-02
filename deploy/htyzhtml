@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ ! -t 0 || ! -t 1 ]]; then
+  echo '请在交互式 SSH 终端运行 htyzhtml。' >&2
+  exit 1
+fi
+
+cd /opt/htyz
+trap 'unset account_email account_password account_confirm account_type' EXIT
+
+read -r -p '用户邮箱：' account_email
+read -r -p '身份类型（1 在校生 / 2 毕业生）：' account_choice
+case "$account_choice" in
+  1) account_type=current_student ;;
+  2) account_type=graduate ;;
+  *) echo '请输入 1 或 2。' >&2; exit 1 ;;
+esac
+
+read -r -s -p '登录密码（至少 10 位，包含字母和数字）：' account_password
+printf '\n'
+read -r -s -p '再次输入密码：' account_confirm
+printf '\n'
+if [[ "$account_password" != "$account_confirm" ]]; then
+  echo '两次输入的密码不一致，未创建账号。' >&2
+  exit 1
+fi
+
+printf '将创建 %s（%s）。\n' "$account_email" "$([[ "$account_type" == graduate ]] && printf '毕业生' || printf '在校生')"
+read -r -p '确认创建？输入 yes 继续：' confirmation
+if [[ "$confirmation" != yes ]]; then
+  echo '已取消，未创建账号。'
+  exit 0
+fi
+
+printf '%s\n%s\n%s\n' "$account_email" "$account_type" "$account_password" | /usr/bin/node /opt/htyz/server/create-user.js

@@ -1,0 +1,57 @@
+[Unit]
+Description=htyz.space school community
+Documentation=https://htyz.space
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=htyz
+Group=htyz
+WorkingDirectory=/opt/htyz
+EnvironmentFile=/opt/htyz/.env
+ExecStartPre=/usr/bin/test -r /opt/htyz/dist/index.html
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=3
+UMask=0027
+
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/opt/htyz/data /opt/htyz/uploads
+
+# ------------------------------------------------------------
+# 视频自动转码相关
+# ------------------------------------------------------------
+# 上传后由后台把大疆等 HEVC 素材转成浏览器可直接播放的 H.264。
+# 4K 解码 + 编码的内存峰值高于纯 Web 服务，因此上限从 320M 提到 640M
+#（机器共 960M；实测转码期间系统仍有 600M 可用）。
+MemoryMax=640M
+# 硬性 CPU 保险：转码最多占 85% 单核，确保 nginx/node 始终有 CPU。
+# 实测不限额时网站响应也不受影响，此配额用于极端情况兜底。
+CPUQuota=85%
+# ffmpeg 需要 fork 子进程
+TasksMax=256
+LimitNOFILE=4096
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=htyz
+
+[Install]
+WantedBy=multi-user.target
