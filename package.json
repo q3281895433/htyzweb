@@ -1,0 +1,40 @@
+{
+  "name": "htyz-community",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "node --watch server/index.js",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "test": "node --test",
+    "check": "npm run test && npm run build",
+    "create-super": "node server/create-super.js",
+    "bootstrap-super": "node server/bootstrap-super.js"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "better-sqlite3": "11.5.0",
+    "cookie-parser": "1.4.7",
+    "dotenv": "16.4.5",
+    "express": "4.22.3",
+    "express-rate-limit": "7.5.0",
+    "helmet": "8.0.0",
+    "multer": "2.4.0",
+    "nodemailer": "^9.1.1"
+  },
+  "devDependencies": {
+    "@fontsource/noto-serif-sc": "^5.2.9",
+    "@vitejs/plugin-react": "4.3.4",
+    "lucide-react": "^0.544.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.4",
+    "supertest": "7.1.4",
+    "vite": "5.4.14"
+  }
+}
